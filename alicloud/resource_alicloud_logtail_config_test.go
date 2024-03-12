@@ -102,17 +102,39 @@ func TestAccAliCloudLogTail_basic(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: testAccConfig(map[string]interface{}{
-					"project":      "${alicloud_log_project.default.name}",
-					"logstore":     "${alicloud_log_store.default.name}",
-					"input_type":   "file",
-					"name":         name,
-					"output_type":  "LogService",
-					"input_detail": `{\"discardUnmatch\":false,\"enableRawLog\":true,\"fileEncoding\":\"gbk\",\"filePattern\":\"access.log\",\"logPath\":\"/logPath\",\"logType\":\"json_log\",\"maxDepth\":10,\"topicFormat\":\"default\"}`,
+					"project":          "${alicloud_log_project.default.name}",
+					"logstore":         "${alicloud_log_store.default.name}",
+					"input_type":       "plugin",
+					"name":             name,
+					"output_type":      "test",
+					"last_modify_time": "1710228699",
+					"input_detail":     `{\"plugin\":{\"inputs\":[{\"detail\":{\"ExcludeEnv\":null,\"ExcludeLabel\":null,\"IncludeEnv\":null,\"IncludeLabel\":null,\"Stderr\":true,\"Stdout\":true},\"type\":\"service_docker_stdout\"}]}}`,
 				}),
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheck(map[string]string{
-						"name":         name,
-						"input_detail": "{\"discardUnmatch\":false,\"enableRawLog\":true,\"fileEncoding\":\"gbk\",\"filePattern\":\"access.log\",\"logPath\":\"/logPath\",\"logType\":\"json_log\",\"maxDepth\":10,\"topicFormat\":\"default\"}",
+						"name":             name,
+						"input_type":       "plugin",
+						"last_modify_time": "1710228699",
+						"input_detail":     "{\"plugin\":{\"inputs\":[{\"detail\":{\"ExcludeEnv\":null,\"ExcludeLabel\":null,\"IncludeEnv\":null,\"IncludeLabel\":null,\"Stderr\":true,\"Stdout\":true},\"type\":\"service_docker_stdout\"}]}}",
+					}),
+				),
+			},
+			{
+				Config: testAccConfig(map[string]interface{}{
+					"project":          "${alicloud_log_project.default.name}",
+					"logstore":         "${alicloud_log_store.default.name}",
+					"input_type":       "file",
+					"name":             name,
+					"output_type":      "LogService",
+					"last_modify_time": "1710228691",
+					"input_detail":     `{\"discardUnmatch\":false,\"enableRawLog\":true,\"fileEncoding\":\"gbk\",\"filePattern\":\"access.log\",\"logPath\":\"/logPath\",\"logType\":\"json_log\",\"maxDepth\":10,\"topicFormat\":\"default\"}`,
+				}),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheck(map[string]string{
+						"name":             name,
+						"input_type":       "file",
+						"last_modify_time": "1710228691",
+						"input_detail":     "{\"discardUnmatch\":false,\"enableRawLog\":true,\"fileEncoding\":\"gbk\",\"filePattern\":\"access.log\",\"logPath\":\"/logPath\",\"logType\":\"json_log\",\"maxDepth\":10,\"topicFormat\":\"default\"}",
 					}),
 				),
 			},
@@ -227,6 +249,7 @@ func TestAccAliCloudLogTail_plugin(t *testing.T) {
 					testAccCheck(map[string]string{
 						"input_detail": "{\"plugin\":{\"inputs\":[{\"detail\":{\"ExcludeEnv\":null,\"ExcludeLabel\":null,\"IncludeEnv\":null,\"IncludeLabel\":null,\"Stderr\":true,\"Stdout\":true},\"type\":\"service_docker_stdout\"}]}}",
 						"log_sample":   REMOVEKEY,
+						"input_type":   "plugin",
 					}),
 				),
 			},
@@ -303,10 +326,11 @@ func resourceLogTailDependence(name string) string {
 }
 
 var logTailMap = map[string]string{
-	"name":         CHECKSET,
-	"project":      CHECKSET,
-	"logstore":     CHECKSET,
-	"input_type":   "file",
-	"output_type":  "LogService",
-	"input_detail": CHECKSET,
+	"name":             CHECKSET,
+	"project":          CHECKSET,
+	"logstore":         CHECKSET,
+	"input_type":       CHECKSET,
+	"output_type":      CHECKSET,
+	"input_detail":     CHECKSET,
+	"last_modify_time": CHECKSET,
 }
