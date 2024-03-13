@@ -1,13 +1,14 @@
 name: Terrafrom Integration Checks
 on:
-  pull_request_review:
-    types: [edited, submitted]
+  pull_request:
     paths:
       - alicloud/*.go
+    branches:
+      - master
+
 
 jobs:
   DocsExampleTest:
-    if: github.event.review.state == 'approved' || github.event.review.body == 'approved'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -85,7 +86,6 @@ jobs:
           go run scripts/docs_example_check.go ${ossObjectPath}
 
   IntegrationTest:
-    if: github.event.review.state == 'approved' || github.event.review.body == 'approved'
     runs-on: ubuntu-latest
     needs: DocsExampleTest
     steps:
